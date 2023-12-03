@@ -1,0 +1,11 @@
+C:\Users\Алина\source\repos\pkglab5\pkglab5\bin\Release\pkglab5.exe.config
+C:\Users\Алина\source\repos\pkglab5\pkglab5\bin\Release\pkglab5.exe
+C:\Users\Алина\source\repos\pkglab5\pkglab5\bin\Release\pkglab5.pdb
+C:\Users\Алина\source\repos\pkglab5\pkglab5\obj\Release\pkglab5.csproj.AssemblyReference.cache
+C:\Users\Алина\source\repos\pkglab5\pkglab5\obj\Release\pkglab5.csproj.SuggestedBindingRedirects.cache
+C:\Users\Алина\source\repos\pkglab5\pkglab5\obj\Release\pkglab5.Form1.resources
+C:\Users\Алина\source\repos\pkglab5\pkglab5\obj\Release\pkglab5.Properties.Resources.resources
+C:\Users\Алина\source\repos\pkglab5\pkglab5\obj\Release\pkglab5.csproj.GenerateResource.cache
+C:\Users\Алина\source\repos\pkglab5\pkglab5\obj\Release\pkglab5.csproj.CoreCompileInputs.cache
+C:\Users\Алина\source\repos\pkglab5\pkglab5\obj\Release\pkglab5.exe
+C:\Users\Алина\source\repos\pkglab5\pkglab5\obj\Release\pkglab5.pdb
