@@ -46,13 +46,21 @@ namespace pkglab5
 
     class Clipper
     {
-        public void SetRectangleClipper(float x_min, float y_min, float x_max, float y_max)
+        public void SetRectangleClipper1(float x_min, float y_min, float x_max, float y_max)
         {
-            rect = new RectangleClipper(x_min, y_min, x_max, y_max);
+            rect1 = new RectangleClipper(x_min, y_min, x_max, y_max);
         }
-        public void SetRectangleClipper(Point min, Point max)
+        public void SetRectangleClipper1(Point min, Point max)
         {
-            rect = new RectangleClipper(min, max);
+            rect1 = new RectangleClipper(min, max);
+        }
+        public void SetRectangleClipper2(float x_min, float y_min, float x_max, float y_max)
+        {
+            rect2 = new RectangleClipper(x_min, y_min, x_max, y_max);
+        }
+        public void SetRectangleClipper2(Point min, Point max)
+        {
+            rect2 = new RectangleClipper(min, max);
         }
         public bool LiangBarski(PointF p1, PointF p2, ref float t_enter, ref float t_outer)
         {
@@ -63,7 +71,7 @@ namespace pkglab5
             float t_max = 1.0f;
 
             float[] p = { -dx, dx, -dy, dy };
-            float[] q = { p1.X - rect.pMin.X, rect.pMax.X - p1.X, p1.Y - rect.pMin.Y, rect.pMax.Y - p1.Y };
+            float[] q = { p1.X - rect1.pMin.X, rect1.pMax.X - p1.X, p1.Y - rect1.pMin.Y, rect1.pMax.Y - p1.Y };
 
             for (int i = 0; i < 4; i++)
             {
@@ -97,15 +105,52 @@ namespace pkglab5
             t_outer = t_max;
             return true;  // Line is inside or intersects the window
         }
-        public RectangleClipper rect;
-        public float ScalarMultiply(Vec vec1, Vec vec2)
-        {
-            return (vec1.A * vec2.A + vec1.B * vec2.B);
-        }
 
-        public float VectorMultiply(Vec vec1, Vec vec2)
+        public bool LiangBarskiPolygon(PointF p1, PointF p2, ref float t_enter, ref float t_outer)
         {
-            return vec1.A * vec2.B - vec1.B * vec2.A;
+            float dx = p2.X - p1.X;
+            float dy = p2.Y - p1.Y;
+
+            float t_min = 0.0f;
+            float t_max = 1.0f;
+
+            float[] p = { -dx, dx, -dy, dy };
+            float[] q = { p1.X - rect2.pMin.X, rect2.pMax.X - p1.X, p1.Y - rect2.pMin.Y, rect2.pMax.Y - p1.Y };
+
+            for (int i = 0; i < 4; i++)
+            {
+                if (p[i] == 0)
+                {
+                    if (q[i] < 0)
+                    {
+                        return false;  // Line is parallel and outside the window
+                    }
+                }
+                else
+                {
+                    float t = q[i] / p[i];
+                    if (p[i] < 0)
+                    {
+                        t_min = Math.Max(t, t_min);
+                    }
+                    else
+                    {
+                        t_max = Math.Min(t, t_max);
+                    }
+                }
+            }
+
+            if (t_min > t_max)
+            {
+                return false;  // Line is outside the window
+            }
+
+            t_enter = t_min;
+            t_outer = t_max;
+            return true;  // Line is inside or intersects the window
         }
+        public RectangleClipper rect1;
+        public RectangleClipper rect2;
+
     }
 }

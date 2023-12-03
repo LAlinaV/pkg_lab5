@@ -28,11 +28,13 @@ namespace pkglab5
         {
             InitializeComponent();
             
-            clipper.rect = new RectangleClipper(-1, -3, 5, 4);
-            clipper.SetRectangleClipper(-1, -3, 5, 4);
+            clipper.rect1 = new RectangleClipper(-1, -3, 5, 4);
+            clipper.SetRectangleClipper1(-1, -3, 5, 4);
+            clipper.rect2 = new RectangleClipper(-1, -3, 5, 4);
+            clipper.SetRectangleClipper2(-1, -3, 5, 4);
             numericUpDown1.Value = scale;
-            segmentsForLiangBarski = readRectangleClipper("liang.txt");
-            segmentsForPolygon = readPolygonalClipper("polygon.txt");
+            segmentsForLiangBarski = readRectangle("liang.txt");
+            segmentsForPolygon = readPolygon("polygon.txt");
         }
 
         public void drawMarkup(Graphics gr, Panel panel)
@@ -106,17 +108,27 @@ namespace pkglab5
             return new Point((int)Math.Round(point.X * (float)scale) + cx, -(int)Math.Round(point.Y * (float)scale) + cy);
         }
 
-        public void drawRectangle(Graphics gr, Panel panel)
+        public void drawRectangle1(Graphics gr, Panel panel)
         {
             Pen pen = new Pen(Color.Indigo, (int)Math.Floor((decimal)shift / 3));
-            var a = (int)Math.Round((clipper.rect.pMax.X - clipper.rect.pMin.X) * (float)scale);
-            var b = (int)Math.Round((clipper.rect.pMax.Y - clipper.rect.pMin.Y) * (float)scale);
+            var a = (int)Math.Round((clipper.rect1.pMax.X - clipper.rect1.pMin.X) * (float)scale);
+            var b = (int)Math.Round((clipper.rect1.pMax.Y - clipper.rect1.pMin.Y) * (float)scale);
             var cx = panel.Width / 2;
             var cy = panel.Height / 2;
-            gr.DrawRectangle(pen, new Rectangle((int)Math.Round(clipper.rect.pMin.X * (float)scale) + cx, -(int)Math.Round(clipper.rect.pMax.Y * (float)scale) + cy, a, b));
+            gr.DrawRectangle(pen, new Rectangle((int)Math.Round(clipper.rect1.pMin.X * (float)scale) + cx, -(int)Math.Round(clipper.rect1.pMax.Y * (float)scale) + cy, a, b));
         }
 
-        public List<KeyValuePair<PointF, PointF>> readRectangleClipper(string file)
+        public void drawRectangle2(Graphics gr, Panel panel)
+        {
+            Pen pen = new Pen(Color.Indigo, (int)Math.Floor((decimal)shift / 3));
+            var a = (int)Math.Round((clipper.rect2.pMax.X - clipper.rect2.pMin.X) * (float)scale);
+            var b = (int)Math.Round((clipper.rect2.pMax.Y - clipper.rect2.pMin.Y) * (float)scale);
+            var cx = panel.Width / 2;
+            var cy = panel.Height / 2;
+            gr.DrawRectangle(pen, new Rectangle((int)Math.Round(clipper.rect2.pMin.X * (float)scale) + cx, -(int)Math.Round(clipper.rect2.pMax.Y * (float)scale) + cy, a, b));
+        }
+
+        public List<KeyValuePair<PointF, PointF>> readRectangle(string file)
         {
             List<KeyValuePair<PointF, PointF>> list = new List<KeyValuePair<PointF, PointF>>();
             StreamReader r = new StreamReader(file);
@@ -126,11 +138,13 @@ namespace pkglab5
                 var str_ = r.ReadLine().Split();
                 list.Add(new KeyValuePair<PointF, PointF>(new PointF(float.Parse(str_[0]), float.Parse(str_[1])), new PointF(float.Parse(str_[2]), float.Parse(str_[3]))));
             }
+            var str = r.ReadLine().Split();
             r.Close();
+            clipper.SetRectangleClipper1(float.Parse(str[0]), float.Parse(str[1]), float.Parse(str[2]), float.Parse(str[3]));
             return list;
         }
 
-        public List<KeyValuePair<PointF, PointF>> readPolygonalClipper(string file)
+        public List<KeyValuePair<PointF, PointF>> readPolygon(string file)
         {
             List<KeyValuePair<PointF, PointF>> polygon = new List<KeyValuePair<PointF, PointF>>();
             StreamReader r = new StreamReader(file);
@@ -140,7 +154,9 @@ namespace pkglab5
                 var str_ = r.ReadLine().Split();
                 polygon.Add(new KeyValuePair<PointF, PointF>(new PointF(float.Parse(str_[0]), float.Parse(str_[1])), new PointF(float.Parse(str_[2]), float.Parse(str_[3]))));
             }
+            var str = r.ReadLine().Split();
             r.Close();
+            clipper.SetRectangleClipper2(float.Parse(str[0]), float.Parse(str[1]), float.Parse(str[2]), float.Parse(str[3]));
             return polygon;
         }
 
@@ -156,6 +172,7 @@ namespace pkglab5
                     drawParametricSegment(gr, panel, segmentsForLiangBarski[i].Key, segmentsForLiangBarski[i].Value, t_1, t_2, entering);
                 }
             }
+
         }
         public void clipperSegmentsPolygon(Graphics gr, Panel panel, Pen entering, Pen outering)
         {
@@ -163,7 +180,7 @@ namespace pkglab5
             for (int i = 0; i < segmentsForPolygon.Count; i++)
             {
                 drawSegment(gr, panel, segmentsForPolygon[i].Key, segmentsForPolygon[i].Value, outering);
-                if (clipper.LiangBarski(segmentsForPolygon[i].Key, segmentsForPolygon[i].Value, ref t_1, ref t_2))
+                if (clipper.LiangBarskiPolygon(segmentsForPolygon[i].Key, segmentsForPolygon[i].Value, ref t_1, ref t_2))
                 {
                     drawParametricSegment(gr, panel, segmentsForPolygon[i].Key, segmentsForPolygon[i].Value, t_1, t_2, entering);
                 }
@@ -207,12 +224,12 @@ namespace pkglab5
             Pen outering = new Pen(Color.Lime, shift / 4 + 1);
             if (curMode == mode.LiangBarski)
             {
-                drawRectangle(gr, panel1);
+                drawRectangle1(gr, panel1);
                 clipperSegmentsLiangBarski(gr, panel1, entering, outering);
             }
             else
             {
-                drawRectangle(gr, panel1);
+                drawRectangle2(gr, panel1);
                 clipperSegmentsPolygon(gr, panel1, entering, outering);
             }
         }
